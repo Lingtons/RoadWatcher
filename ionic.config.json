@@ -1,5 +1,7 @@
 {
   "name": "RoadWatcher",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
