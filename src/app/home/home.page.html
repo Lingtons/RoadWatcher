@@ -1,15 +1,60 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
     <ion-title>
-      Home
+      RoadWatcher
     </ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content padding>
+    <!--<ion-card class="welcome-card">
+        <ion-img src="/assets/shapes.svg"></ion-img>
+        <ion-card-header>
+            <ion-card-subtitle>Get Started</ion-card-subtitle>
+            <ion-card-title>Welcome to Ionic</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
+        </ion-card-content>
+    </ion-card>-->
 
-<ion-content>
+    <p text-center>
+        Upload Images & Event Information
+    </p>
+    
+    <ion-item >
+        <ion-label>Type of Event</ion-label>
+        <ion-select>
+            <ion-select-option value="f">Accident</ion-select-option>
+            <ion-select-option value="m">Traffic</ion-select-option>
+        </ion-select>
+    </ion-item>
+
+    <ion-item>
+        <ion-label position="floating">Say Something</ion-label>
+        <ion-textarea></ion-textarea>
+    </ion-item>
+    <ion-list>
+        <ion-item *ngFor="let img of images; index as pos">
+            <h3>Hello</h3>
+        </ion-item>
+    </ion-list>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar color="primary">
+        <ion-button fill="clear" (click)="selectImage()" expand="full" color="light">
+            <ion-icon name="camera" slot="start"></ion-icon>
+            Select Image
+        </ion-button>
+    </ion-toolbar>
+    <ion-toolbar color="send">
+        <ion-button fill="clear" expand="full" color="light">
+            <ion-icon name="cloud-upload" slot="start"></ion-icon>
+            Send
+        </ion-button>
+    </ion-toolbar>
+</ion-footer>
+<!--<ion-content>
     <ion-card class="welcome-card">
       <ion-img src="/assets/shapes.svg"></ion-img>
       <ion-card-header>
@@ -41,4 +86,4 @@
         <ion-label>Theme Your App</ion-label>
       </ion-item>
     </ion-list>
-</ion-content>
+</ion-content>-->
