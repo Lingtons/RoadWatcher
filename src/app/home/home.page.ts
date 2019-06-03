@@ -5,6 +5,7 @@ import { ActionSheetController, ToastController, Platform, LoadingController } f
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
+import { FilePath } from '@ionic-native/file-path/ngx';
 import { finalize } from 'rxjs/operators';
 
 const STORAGE_KEY = 'my_images';
@@ -19,7 +20,7 @@ export class HomePage implements OnInit {
     constructor(private camera: Camera, private file: File, private http: HttpClient, private webView: WebView,
         private actionSheetController: ActionSheetController, private toastController: ToastController,
         private storage: Storage, private plt: Platform, private loadingController: LoadingController,
-        private ref: ChangeDetectorRef) { }
+        private ref: ChangeDetectorRef, private filePath: FilePath) { }
 
     ngOnInit() {
         this.plt.ready().then(() => {
@@ -33,9 +34,9 @@ export class HomePage implements OnInit {
                 let arr = JSON.parse(images);
                 this.images = [];
                 for (let img of arr) {
-                    let filePath = this.file.dataDirectory + img;
-                    let resPath = this.pathForImage(filePath);
-                    this.images.push({ name: img, path: resPath, filePath: filePath });
+                    let fPath = this.file.dataDirectory + img;
+                    let resPath = this.pathForImage(fPath);
+                    this.images.push({ name: img, path: resPath, filePath: fPath });
                 }
             }
         });
@@ -54,6 +55,7 @@ export class HomePage implements OnInit {
         const toast = await this.toastController.create({
             message: text,
             position: "bottom",
+            duration:3000
 
         });
         toast.present();
@@ -93,13 +95,27 @@ export class HomePage implements OnInit {
         };
 
         this.camera.getPicture(options).then(imagePath => {
-            var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-            var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
-            this.copyFileToLocalDir(correctPath, currentName, this.createFileName())
+            if (this.plt.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+                this.filePath.resolveNativePath(imagePath)
+                    .then(filePath => {
+                        let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+                        let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+                        this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+                    });
+            } else {
+                var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+                var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+                this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+            }
+
+            //var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+            //var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+            //this.copyFileToLocalDir(correctPath, currentName, this.createFileName())
         })
     }
+
     copyFileToLocalDir(namePath, currentName, newFileName) {
-        this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(_ => {
+        this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
             this.updateStoredImages(newFileName);
         }, error => {
             this.presentToast('Error while storing file.');

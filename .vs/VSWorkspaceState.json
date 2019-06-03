@@ -1,16 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\plugins\\cordova-plugin-ionic-webview\\src",
-    "\\plugins\\cordova-plugin-ionic-webview\\src\\android",
-    "\\plugins\\cordova-plugin-ionic-webview\\src\\android\\com",
-    "\\plugins\\cordova-plugin-ionic-webview\\src\\android\\com\\ionicframework",
-    "\\plugins\\cordova-plugin-ionic-webview\\src\\android\\com\\ionicframework\\cordova",
-    "\\plugins\\cordova-plugin-ionic-webview\\src\\android\\com\\ionicframework\\cordova\\webview",
-    "\\src",
     "\\src\\app",
     "\\src\\app\\home"
   ],
-  "SelectedNode": "\\src\\app\\home\\home.page.ts",
   "PreviewInSolutionExplorer": false
 }

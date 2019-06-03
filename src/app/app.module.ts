@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 //native packages
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 
@@ -32,7 +33,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
     StatusBar,
     SplashScreen,
       { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-      Camera, File, WebView
+      Camera, File, WebView, FilePath
       
   ],
   bootstrap: [AppComponent]
