@@ -16,6 +16,9 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 
 
@@ -33,7 +36,9 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
     StatusBar,
     SplashScreen,
       { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-      Camera, File, WebView, FilePath
+      Camera, File, WebView, FilePath, AndroidPermissions,
+      Geolocation,
+      LocationAccuracy,
       
   ],
   bootstrap: [AppComponent]

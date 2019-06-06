@@ -6,6 +6,9 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { finalize } from 'rxjs/operators';
 
 const STORAGE_KEY = 'my_images';
@@ -17,14 +20,92 @@ const STORAGE_KEY = 'my_images';
 })
 export class HomePage implements OnInit {
     images = [];
+    locationCoords: any;
+    timetest: any;
+
     constructor(private camera: Camera, private file: File, private http: HttpClient, private webView: WebView,
         private actionSheetController: ActionSheetController, private toastController: ToastController,
         private storage: Storage, private plt: Platform, private loadingController: LoadingController,
-        private ref: ChangeDetectorRef, private filePath: FilePath) { }
+        private ref: ChangeDetectorRef, private filePath: FilePath, private androidPermissions: AndroidPermissions,
+        private geolocation: Geolocation,
+        private locationAccuracy: LocationAccuracy) {
+
+        this.locationCoords = {
+            latitude: "",
+            longitude: "",
+            accuracy: "",
+            timestamp: ""
+        }
+        this.timetest = Date.now();
+    }
 
     ngOnInit() {
         this.plt.ready().then(() => {
             this.loadStoredImages();
+            this.requestGPSPermission();
+        });
+    }
+
+    //Check if application having GPS access permission  
+    checkGPSPermission() {
+        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
+            result => {
+                if (result.hasPermission) {
+
+                    //If having permission show 'Turn On GPS' dialogue
+                    this.askToTurnOnGPS();
+                } else {
+
+                    //If not having permission ask for permission
+                    this.requestGPSPermission();
+                }
+            },
+            err => {
+                alert(err);
+            }
+        );
+    }
+
+    requestGPSPermission() {
+        this.locationAccuracy.canRequest().then((canRequest: boolean) => {
+            if (canRequest) {
+                console.log("4");
+            } else {
+                //Show 'GPS Permission Request' dialogue
+                this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION)
+                    .then(
+                        () => {
+                            // call method to turn on GPS
+                            this.askToTurnOnGPS();
+                        },
+                        error => {
+                            //Show alert if user click on 'No Thanks'
+                            alert('requestPermission Error requesting location permissions ' + error)
+                        }
+                    );
+            }
+        });
+    }
+
+    askToTurnOnGPS() {
+        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+            () => {
+                // When GPS Turned ON call method to get Accurate location coordinates
+                this.getLocationCoordinates()
+            },
+            error => alert('Error requesting location permissions ' + JSON.stringify(error))
+        );
+    }
+
+    // Methos to get device accurate coordinates using device GPS
+    getLocationCoordinates() {
+        this.geolocation.getCurrentPosition().then((resp) => {
+            this.locationCoords.latitude = resp.coords.latitude;
+            this.locationCoords.longitude = resp.coords.longitude;
+            this.locationCoords.accuracy = resp.coords.accuracy;
+            this.locationCoords.timestamp = resp.timestamp;
+        }).catch((error) => {
+            alert('Error getting location' + error);
         });
     }
 
